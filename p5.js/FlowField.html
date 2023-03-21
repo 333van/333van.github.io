@@ -31,13 +31,13 @@ let ScreenHeight = window.innerHeight;
 
 const backgroundColor = 0;
 const backgroundApha = 5;
-const FrameRate = 120;
+const FrameRate = 60;
 
 const ParticleNumber = 10000;
 const ParticleSize = 1;
 const noiseScale = 0.03;
-const xFactor = 1;
-const yFactor = 1;
+const xFactor = 2;
+const yFactor = 0.5;
 
 let Particles = [];
 
@@ -47,7 +47,7 @@ function setup(){
   createCanvas(ScreenWidth,ScreenHeight);
   frameRate(FrameRate);
   setupOnce();
-  stroke(color(255,0,0));
+  // stroke(255,0,0);
   strokeWeight(ParticleSize);
 }
 
@@ -55,9 +55,11 @@ function draw(){
   background(backgroundColor, backgroundApha);
   for(i=0; i<ParticleNumber; i++){
     let Particle = Particles[i];
-    point(Particle.x, Particle.y);
     let Noise = noise(Particle.x * noiseScale, Particle.y * noiseScale);
     let Angle = TAU * Noise;
+    Particle.r = 32 + floor(Noise * 223);
+    stroke(color(Particle.r, Particle.g, Particle.b));
+    point(Particle.x, Particle.y);
     Particle.x += cos(Angle) * xFactor;
     Particle.y += sin(Angle) * yFactor;
     if(isPointOnScreen(Particle) === false){
@@ -77,7 +79,13 @@ function setupOnce(){
   if(isRanOnce === false){
     isRanOnce = true;
     for(i=0; i<ParticleNumber; i++){
-      Particles.push(createVector(random(ScreenWidth), random(ScreenHeight)));
+      Particles.push({
+        x: random(ScreenWidth),
+        y: random(ScreenHeight),
+        r: 255,
+        g: 32,
+        b: 64,
+      })
     }
   }
 }
