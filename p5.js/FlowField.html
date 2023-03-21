@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flow Field with p5.js</title>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+      background-color: #1b1b1b;
+      overflow: hidden;
+    }
+    main {
+      margin: 0px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.6.0/lib/p5.min.js"></script>
+</head>
+
+<body>
+  <main>
+  </main>
+</body>
+
+<script>
+
+let ScreenWidth  = window.innerWidth;
+let ScreenHeight = window.innerHeight;
+
+const backgroundColor = 0;
+const backgroundApha = 5;
+const FrameRate = 120;
+
+const ParticleNumber = 10000;
+const ParticleSize = 1;
+const noiseScale = 0.03;
+const xFactor = 1;
+const yFactor = 1;
+
+let Particles = [];
+
+let isRanOnce = false;
+
+function setup(){
+  createCanvas(ScreenWidth,ScreenHeight);
+  frameRate(FrameRate);
+  setupOnce();
+  stroke(color(255,0,0));
+  strokeWeight(ParticleSize);
+}
+
+function draw(){
+  background(backgroundColor, backgroundApha);
+  for(i=0; i<ParticleNumber; i++){
+    let Particle = Particles[i];
+    point(Particle.x, Particle.y);
+    let Noise = noise(Particle.x * noiseScale, Particle.y * noiseScale);
+    let Angle = TAU * Noise;
+    Particle.x += cos(Angle) * xFactor;
+    Particle.y += sin(Angle) * yFactor;
+    if(isPointOnScreen(Particle) === false){
+      Particle.x = random(ScreenWidth);
+      Particle.y = random(ScreenHeight);
+    }
+  }
+}
+
+function windowResized(){
+  ScreenWidth  = window.innerWidth;
+  ScreenHeight = window.innerHeight;
+  setup();
+}
+
+function setupOnce(){
+  if(isRanOnce === false){
+    isRanOnce = true;
+    for(i=0; i<ParticleNumber; i++){
+      Particles.push(createVector(random(ScreenWidth), random(ScreenHeight)));
+    }
+  }
+}
+
+function mouseReleased(){
+  // noiseSeed(millis());
+}
+
+function isPointOnScreen(vector){
+  return vector.x >= 0 && vector.x <= ScreenWidth && vector.y >= 0 && vector.y <= ScreenHeight;
+}
+
+</script>
+
+</html>
